@@ -1,0 +1,11 @@
+project: clicktrackers
+
+authors:
+  - gajduler
+
+type: scalable
+
+status: Complete
+
+description: >
+    Web panel simplifying clicktracker creation in DCM. AppEngine Standard compatible.

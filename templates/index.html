@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--
+Copyright 2017 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+{%raw%}
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <title>Clicktrackers</title>
+</head>
+
+<body ng-app="BlankApp" ng-cloak>
+  <md-content ng-controller="AppController">
+    <md-toolbar class="md-hue-2">
+      <div class="md-toolbar-tools">
+        <span>ClickTracker editor</span>
+      </div>
+    </md-toolbar>
+    <div layout-padding>
+      <div>
+        <div>Choose the DCM profile you want to use:</div>
+        <md-input-container>
+
+          <label>ProfileID</label>
+          <md-progress-linear md-mode="indeterminate" ng-if="profileLoading"></md-progress-linear>
+          <md-select ng-model="profile" md-on-close="profileChanged()">
+            <md-option ng-repeat="p in profiles track by p.profileId" ng-value="p.profileId">{{p.userName}} ({{p.accountId}})</md-option>
+          </md-select>
+        </md-input-container>
+      </div>
+      <div>
+        <md-progress-linear md-mode="indeterminate" ng-if="placementLoading"></md-progress-linear>
+        <md-input-container ng-if="!!profile">
+          <label>PlacementId</label>
+          <input type="number" ng-model="placementId" ng-model-options="{debounce: 200}" ng-change="search(placementId)">
+          <span ng-if="placementNotFound">Can't find the placement with ID {{placementId}}. Make sure you selected the correct profile.</span>
+        </md-input-container>
+        <div ng-if="placement">Found the placement <a ng-href="{{placement.url}}">{{placement.name}}</a></div>
+      </div>
+      <div ng-if="!!placement">
+        <md-progress-linear md-mode="indeterminate" ng-if="trackers.uploading"></md-progress-linear>
+        <md-input-container class="md-block" ng-if="!trackers.parsed">
+          <label>Please enter name and url of clicktrackers separated by a comma, one on each row</label>
+          <textarea ng-model="trackers.csv" md-select-on-focus></textarea>
+        </md-input-container>
+        <table ng-if="trackers.parsed">
+          <thead>
+            <th>Name</th>
+            <th>URL</th>
+            <th>ID</th>
+            <th>ClickUrl</th>
+          </thead>
+          <tr ng-repeat="p in trackers.parsed" layout-padding>
+            <td>{{p.name}}</td>
+            <td>{{p.url}}</td>
+            <td>{{p.id}}</td>
+            <td><a href="{{p.clickUrl}}">{{p.clickUrl}}</a></td>
+          </tr>
+        </table>
+        <div>
+          <md-button class="md-raised" ng-click="parse()" ng-if="!trackers.parsed">Parse</md-button>
+          <md-button class="md-raised md-primary" ng-disabled="trackers.uploading" ng-click="upload()" ng-if="trackers.parsed && !trackers.uploaded">Upload {{trackers.parsed.length}} trackers to DCM</md-button>
+          <md-button class="md-raised md-primary" ng-if="trackers.uploaded" ngclipboard-success="onSuccess(e)" ngclipboard data-clipboard-text="{{trackers.uploadedCsv}}">Copy as CSV</md-button>
+
+        </div>
+      </div>
+    </div>
+  </md-content>
+</body>
+<script src=" https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js "></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js "></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js "></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js "></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-cookies.js "></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngclipboard/1.1.2/ngclipboard.js "></script>
+<script type="text/javascript " src="static/main.js "></script>
+{%endraw%}
+
+</html>
